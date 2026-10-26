@@ -1,0 +1,44 @@
+# The same example with two rule faults, so the checker has something to fail on.
+# Run: python3 check_policies.py kortix.yaml.broken
+#
+# Fault 1: a project-wide rule written as a relative pattern ("create_issue"
+#          instead of "linear.create_issue").
+# Fault 2: a sensitive connector that also allows one action with always_run,
+#          which removes the approval gate that sensitive: true is there for.
+
+policy:
+  default_mode: allow_all
+
+policies:
+  - match: "*.delete*"
+    action: block
+
+  # Fault 1: no dot, so nothing it can match is a fully qualified action.
+  - match: "create_issue"
+    action: require_approval
+
+connectors:
+  - slug: linear
+    name: Linear
+    provider: mcp
+    url: https://mcp.linear.app/mcp
+    transport: http
+    policies:
+      - match: "list_*"
+        action: always_run
+      - match: "*"
+        action: require_approval
+
+  - slug: sentry
+    name: Sentry
+    provider: mcp
+    url: https://mcp.sentry.dev/mcp
+    sensitive: true
+    policies:
+      # Fault 2: always_run under sensitive: true.
+      - match: "list_events"
+        action: always_run
+
+agents:
+  triage:
+    connectors: [linear, sentry]
