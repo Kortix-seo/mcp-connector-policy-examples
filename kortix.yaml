@@ -1,0 +1,72 @@
+# Example Kortix manifest: three MCP connectors and the policy rules that
+# decide what each one may do. Kortix is the open-source AI Operating System.
+#
+# Copy this file into a Kortix project, replace the servers and rules with your
+# own, then run: python3 check_policies.py kortix.yaml
+#
+# The manifest never holds a credential. Connector credentials are brokered
+# server-side and never enter the machine.
+
+policy:
+  # Off until you set them. allow_all (the default) runs every action that no
+  # rule below matched. risk runs reads and holds writes and destructive
+  # actions for approval. Set risk, or write rules, before an agent gets a write.
+  default_mode: allow_all
+
+policies:
+  # Project-wide rules are fully qualified <slug>.<action>. A connector rule
+  # cannot override them.
+  - match: "*.delete*"
+    action: block
+
+  - match: "linear.create_issue"
+    action: require_approval
+
+connectors:
+  - slug: linear
+    name: Linear
+    provider: mcp
+    # A server added from its URL is named after its domain. The URL is
+    # illustrative: check the vendor's docs for the endpoint before you paste it.
+    url: https://mcp.linear.app/mcp
+    transport: http
+    policies:
+      - match: "list_*"
+        action: always_run
+      - match: "get_*"
+        action: always_run
+      - match: "*"
+        action: require_approval
+
+  - slug: notion
+    name: Notion
+    provider: mcp
+    # Illustrative URL, named after the server's domain.
+    url: https://mcp.notion.com/mcp
+    transport: sse
+    policies:
+      - match: "read_*"
+        action: always_run
+      - match: "create_page"
+        action: always_run
+        conditions:
+          # arg is a dot path into the call's arguments. A missing argument
+          # never matches, so a create_page without this path falls through
+          # to the require_approval rule below.
+          - arg: parent.database_id
+            match: "3f2a1c*"
+      - match: "*"
+        action: require_approval
+
+  - slug: sentry
+    name: Sentry
+    provider: mcp
+    # Illustrative URL, named after the server's domain.
+    url: https://mcp.sentry.dev/mcp
+    # Every remaining action needs approval, reads included.
+    sensitive: true
+
+agents:
+  triage:
+    # Slugs, or all. An omitted value means none.
+    connectors: [linear, notion, sentry]
