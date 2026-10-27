@@ -96,9 +96,9 @@ It reads lines and indentation, and it looks only at the fields above. It is not
 
 ## Where to read more
 
-- [Which permissions apply when an agent calls a connector](https://mcpconnectorsguide.com/whose-permissions-apply)
-- [What an agent can see through a connector](https://mcpconnectorsguide.com/what-can-an-agent-see)
-- [Kortix connector docs](https://kortix.com/docs/connect/connectors), for the provider table, the account rules and the full policy reference.
+Three pages of an independent guide go with this file. [Which permissions apply when an agent calls a connector](https://mcpconnectorsguide.com/whose-permissions-apply) works through the account choice that the first three levels above never settle. [What an agent can see through a connector](https://mcpconnectorsguide.com/what-can-an-agent-see) separates what a server publishes from what one agent may call.
+
+A project that adds more than one connector has to settle [how several MCP servers fit together](https://mcpconnectorsguide.com/multiple-mcp-servers): colliding tool names, scattered rules and per-agent grants are what break first. The line between [an MCP server and the connector that carries its rule](https://mcpconnectorsguide.com/mcp-connector-vs-mcp-server) is the line between someone else's software and this file, and on Claude, [a Claude connector and the account behind it](https://mcpconnectorsguide.com/claude-mcp-connectors) are configured on three different surfaces, none of which is the manifest. The [Kortix connector docs](https://kortix.com/docs/connect/connectors) remain the reference for the provider table, the account rules and the full policy reference.
 
 ## A note on scope
 
