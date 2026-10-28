@@ -33,6 +33,8 @@ A call to `sentry.list_events` has no rule of its own, so level 3 decides. `sens
 
 That is the whole reason to keep this in git. A reader can see, in one file, that a delete is blocked everywhere, that one Notion write skips the queue only with an allowlisted parent, and that everything on Sentry waits for a person.
 
+Three connectors is the easy case. Once one project holds eight or ten remote servers, the questions change from writing a rule to keeping the rules from colliding, and [running several MCP servers in one project](https://mcpconnectorsguide.com/multiple-mcp-servers) walks through that file layout. If the estate grows until a proxy sits in front of the servers, [what an open-source MCP gateway does with the call](https://mcpconnectorsguide.com/open-source-mcp-gateway) is the companion read: the gateway routes and injects credentials, and this file still decides whether the call runs.
+
 ## Run the checker
 
 Python 3, standard library only, no network calls.
