@@ -33,8 +33,6 @@ A call to `sentry.list_events` has no rule of its own, so level 3 decides. `sens
 
 That is the whole reason to keep this in git. A reader can see, in one file, that a delete is blocked everywhere, that one Notion write skips the queue only with an allowlisted parent, and that everything on Sentry waits for a person.
 
-Three connectors is the easy case. Once one project holds eight or ten remote servers, the questions change from writing a rule to keeping the rules from colliding, and [running several MCP servers in one project](https://mcpconnectorsguide.com/multiple-mcp-servers) walks through that file layout. If the estate grows until a proxy sits in front of the servers, [what an open-source MCP gateway does with the call](https://mcpconnectorsguide.com/open-source-mcp-gateway) is the companion read: the gateway routes and injects credentials, and this file still decides whether the call runs.
-
 ## Run the checker
 
 Python 3, standard library only, no network calls.
@@ -98,9 +96,10 @@ It reads lines and indentation, and it looks only at the fields above. It is not
 
 ## Where to read more
 
-Three pages of an independent guide go with this file. [Which permissions apply when an agent calls a connector](https://mcpconnectorsguide.com/whose-permissions-apply) works through the account choice that the first three levels above never settle. [What an agent can see through a connector](https://mcpconnectorsguide.com/what-can-an-agent-see) separates what a server publishes from what one agent may call.
-
-A project that adds more than one connector has to settle [how several MCP servers fit together](https://mcpconnectorsguide.com/multiple-mcp-servers): colliding tool names, scattered rules and per-agent grants are what break first. The line between [an MCP server and the connector that carries its rule](https://mcpconnectorsguide.com/mcp-connector-vs-mcp-server) is the line between someone else's software and this file, and on Claude, [a Claude connector and the account behind it](https://mcpconnectorsguide.com/claude-mcp-connectors) are configured on three different surfaces, none of which is the manifest. The [Kortix connector docs](https://kortix.com/docs/connect/connectors) remain the reference for the provider table, the account rules and the full policy reference.
+- [Which permissions apply when an agent calls a connector](https://mcpconnectorsguide.com/whose-permissions-apply)
+- [What an agent can see through a connector](https://mcpconnectorsguide.com/what-can-an-agent-see)
+- [Running several MCP servers in one project](https://mcpconnectorsguide.com/multiple-mcp-servers), for what changes when one agent holds connectors to more than one server and where the servers' rules meet.
+- [Kortix connector docs](https://kortix.com/docs/connect/connectors), for the provider table, the account rules and the full policy reference.
 
 ## A note on scope
 
