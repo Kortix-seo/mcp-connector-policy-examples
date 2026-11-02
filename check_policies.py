@@ -1,12 +1,13 @@
 #!/usr/bin/env python3
 """Offline policy checker for a Kortix `kortix.yaml`.
 
-Kortix decides a connector call in four levels, and the first match wins:
+Kortix evaluates a connector call in four levels, and the first match wins:
 
   1. project-wide `policies:` in kortix.yaml   (fully qualified, e.g. gmail.send_email)
-  2. the calling agent's policy set            (agents.<name>.policy_sets, on that connector)
-  3. the connector's own `policies:`           (relative, e.g. send_*, the base rules)
-  4. no rule matched                           (sensitive holds the call, else policy.default_mode)
+  2. the calling agent's policy set on that connector (`agents.<name>.policy_sets`)
+  3. the connector's own `policies:`           (relative, e.g. send_*)
+  4. no rule matched: `sensitive: true` holds the call for approval, reads
+     included; otherwise `policy.default_mode` decides (allow_all, the default, or risk)
 
 Source: https://kortix.com/docs/developers#connector-rules-and-approvals
 
@@ -23,15 +24,12 @@ import sys
 # Allow = always_run, Ask = require_approval, Block = block.
 ACTIONS = ("always_run", "require_approval", "block")
 GLOB_CHARS = "*?[]"
-# A lint cap of this script's own: the docs set no limit on conditions, and say
-# every condition a rule carries must hold.
-MAX_CONDITIONS = 10
 
 LEVELS = (
     "1. project-wide policies: in kortix.yaml   fully qualified, e.g. gmail.send_email",
-    "2. the calling agent's policy set          agents.<name>.policy_sets, on that connector",
-    "3. the connector's own policies:           relative, e.g. send_*, the base rules",
-    "4. no rule matched                         sensitive holds the call, else policy.default_mode",
+    "2. the calling agent's policy set:          agents.<name>.policy_sets",
+    "3. the connector's own policies:            relative, e.g. send_*",
+    "4. no rule matched: sensitive: true holds the call; else policy.default_mode",
 )
 SOURCE = "https://kortix.com/docs/developers#connector-rules-and-approvals"
 
@@ -255,12 +253,6 @@ def check(text):
                     rule["line"],
                     '%s rule %s has action "%s"; use always_run, require_approval or block'
                     % (label, match, action),
-                ))
-            if len(rule["conditions"]) > MAX_CONDITIONS:
-                findings.append((
-                    rule["line"],
-                    '%s rule %s has %d conditions; this check caps a rule at %d, and all must match'
-                    % (label, match, len(rule["conditions"]), MAX_CONDITIONS),
                 ))
             for condition in rule["conditions"]:
                 if not condition["arg"]:
