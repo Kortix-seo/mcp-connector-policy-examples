@@ -98,6 +98,7 @@ It reads lines and indentation, and it looks only at the fields above. It is not
 - [Which permissions apply when an agent calls a connector](https://mcpconnectorsguide.com/whose-permissions-apply)
 - [What an agent can see through a connector](https://mcpconnectorsguide.com/what-can-an-agent-see)
 - [Running several MCP servers in one project](https://mcpconnectorsguide.com/multiple-mcp-servers), for what changes when one agent holds connectors to more than one server and where the servers' rules meet.
+- [MCP connector vs MCP server](https://mcpconnectorsguide.com/mcp-connector-vs-mcp-server), for which half of a call each side owns: the server publishes the tools, the connector entry in your repo carries the rule.
 - [Kortix connector docs](https://kortix.com/docs/guide#connectors), for the provider table, the account rules and the full policy reference.
 
 ## A note on scope
